@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: spacerkt-postgres
+    image: postgres:12-alpine
+    expose:
+      - "${DB_PORT}"
+    volumes:
+      - "spacerkt-volume:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - spacerkt-network
+      - spacerkt-pg-admin
+    restart: unless-stopped
+
+  pg-admin:
+    container_name: spacerkt-pg-admin
+    image: dpage/pgadmin4:4.10
+    ports:
+      - "${PGADMIN_LISTEN_PORT}:${PGADMIN_REVERSE_EXPOSE_PORT}"
+    volumes:
+      - "spacerkt-volume:/var/lib/pgadmin"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT}
+    depends_on:
+      - postgres
+    networks:
+      - spacerkt-pg-admin
+    restart: unless-stopped
+
+  spacerkt:
+    container_name: spacerkt-api-nestjs
+    build:
+      context: .
+      dockerfile: Dockerfile-local
+    ports:
+      - "${PORT_EXPOSED}:${PORT}"
+    volumes:
+      - "./:/spacerkt-volume/app"
+    depends_on:
+      - postgres
+    networks:
+      - spacerkt-network
+    restart: unless-stopped
+
+networks:
+  spacerkt-network:
+    driver: bridge
+  spacerkt-pg-admin:
+     driver: bridge
+
+volumes:
+  spacerkt-volume:
+    driver: "local"
