@@ -1,11 +1,10 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module } from '@nestjs/common'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { TypeOrmModule } from '@nestjs/typeorm'
 
-import { AppService } from './app.service';
-import { AppController } from './controllers/app.controller';
-import { config } from './configs';
-import { url } from 'inspector';
+import { AppService } from './app.service'
+import { AppController } from './controllers/app/app.controller'
+import { config } from './configs'
 
 @Module({
   imports: [
@@ -14,8 +13,8 @@ import { url } from 'inspector';
       useFactory: (configService: ConfigService) =>
         configService.get('database')!,
       imports: [ConfigModule],
-      inject: [ConfigService],
-    }),
+      inject: [ConfigService]
+    })
   ],
   controllers: [AppController],
   providers: [AppService]

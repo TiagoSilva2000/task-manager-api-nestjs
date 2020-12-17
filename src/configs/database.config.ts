@@ -1,5 +1,5 @@
-import { registerAs } from '@nestjs/config';
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { registerAs } from '@nestjs/config'
+import { TypeOrmModuleOptions } from '@nestjs/typeorm'
 
 export const databaseConfig = registerAs(
   'database',
@@ -17,7 +17,7 @@ export const databaseConfig = registerAs(
     synchronize: false,
     logging: process.env.NODE_ENV === 'development',
     cli: {
-      migrationsDir: 'src/database/migrations',
-    },
-  }),
-);
+      migrationsDir: 'src/database/migrations'
+    }
+  })
+)

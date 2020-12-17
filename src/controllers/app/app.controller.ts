@@ -1,6 +1,6 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AppService } from '../app.service';
+import { Controller, Get } from '@nestjs/common'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { AppService } from '../../app.service'
 
 @Controller()
 @ApiTags('root')
@@ -10,6 +10,6 @@ export class AppController {
   @Get()
   @ApiOkResponse({ type: String, description: 'Hello world' })
   getHello(): string {
-    return this.appService.getHello();
-  } 
+    return this.appService.getHello()
+  }
 }

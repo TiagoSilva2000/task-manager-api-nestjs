@@ -1,4 +1,4 @@
-import { appConfig } from './app.config';
-import { databaseConfig } from './database.config';
+import { appConfig } from './app.config'
+import { databaseConfig } from './database.config'
 
-export const config = [appConfig, databaseConfig];
+export const config = [appConfig, databaseConfig]
