@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm'
+import User from './user.entity'
 
 @Entity('task')
 export default class Task {
@@ -29,4 +32,8 @@ export default class Task {
 
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deleted_at: Date | null
+  
+  @JoinColumn({name: 'user_id'})
+  @ManyToOne(() => User, {onDelete: 'CASCADE'})
+  user: User
 }

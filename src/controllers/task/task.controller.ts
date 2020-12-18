@@ -1,33 +1,45 @@
-import {Controller, Delete, Get, Post, Put} from '@nestjs/common'
-import TaskService from '../../../src/services/task/task.service'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query
+} from '@nestjs/common'
+import { CreateTaskDto } from 'src/dtos/create-task.dto'
+import TaskService from 'src/services/task/task.service'
 
-@Controller('tasks')
+@Controller('users/:userid/tasks')
 export default class TaskController {
-  
   constructor(private taskservice: TaskService) {}
 
   @Post()
-  async createOne(): Promise<string> {
-    return await this.taskservice.createOne()
+  async createOne(@Body() createTaskDto: CreateTaskDto): Promise<unknown> {
+    return await this.taskservice.createOne(createTaskDto)
   }
-  
+
   @Get()
-  async findAll(): Promise<string> {
-    return await this.taskservice.findAll()
+  async findAll(@Query('limit') limit?: number): Promise<unknown> {
+    return await this.taskservice.findAll(limit)
   }
 
   @Get(':taskid')
-  async findOne(): Promise<string> {
-    return await this.taskservice.findOne()
+  async findOne(@Param('taskid') taskid: number): Promise<unknown> {
+    return await this.taskservice.findOne(taskid)
   }
 
   @Put(':taskid')
-  async updateOne(): Promise<string> {
-    return await this.taskservice.updateOne()
+  async updateOne(
+    @Param('taskid') taskid: number,
+    @Body() createTaskDto: CreateTaskDto
+  ): Promise<unknown> {
+    return await this.taskservice.updateOne(taskid, createTaskDto)
   }
 
   @Delete(':taskid')
-  async deleteOne(): Promise<string> {
-    return await this.taskservice.deleteOne()
-  } 
+  async deleteOne(@Param('taskid') taskid: number): Promise<unknown> {
+    return await this.taskservice.deleteOne(taskid)
+  }
 }

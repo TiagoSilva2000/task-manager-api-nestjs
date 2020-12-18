@@ -1,9 +1,9 @@
 import { Controller, Get } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { AppService } from '../../app.service'
-
+import { AppService } from '../../services/app.service'
+import crypto from 'crypto'
 @Controller()
-@ApiTags('root')
+// @ApiTags('root')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 

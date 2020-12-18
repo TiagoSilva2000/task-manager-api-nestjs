@@ -1,2 +1,2 @@
-import {databaseConfig} from './database.config'
+import { databaseConfig } from './database.config'
 export = databaseConfig()
