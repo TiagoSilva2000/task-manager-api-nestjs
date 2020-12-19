@@ -5,7 +5,7 @@ import { INestApplication, Logger } from '@nestjs/common'
 
 import morgan = require('morgan')
 
-import { AppModule } from './app.module'
+import { AppModule } from './app/app/modules/app.module'
 import { AppOptions } from './interfaces/app-options.interface'
 
 const logger = new Logger('bootstrap')
