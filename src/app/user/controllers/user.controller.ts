@@ -18,7 +18,7 @@ import UserService from '../services/user.service'
 export default class UserController {
   constructor(private userService: UserService) {}
 
-  @Post()
+  @Post('signin')
   async createOne(@Body() body: CreateUserDto): Promise<unknown> {
     return await this.userService.createOne(body)
   }

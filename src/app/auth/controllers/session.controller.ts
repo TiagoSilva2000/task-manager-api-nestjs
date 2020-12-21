@@ -1,4 +1,11 @@
-import { Controller, Delete, Post, Request, UseGuards, Headers } from '@nestjs/common'
+import {
+  Controller,
+  Delete,
+  Post,
+  Request,
+  UseGuards,
+  Headers
+} from '@nestjs/common'
 import LocalAuthGuard from 'src/app/auth/guards/local-auth.guard'
 import { AuthService } from 'src/app/auth/services/auth.service'
 

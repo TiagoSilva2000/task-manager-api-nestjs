@@ -7,7 +7,6 @@ import { JwtService } from '@nestjs/jwt'
 import { LoginDto } from 'src/app/auth/dtos/login.dto'
 import Token from '../models/token.entity'
 
-
 @Injectable()
 export class AuthService {
   constructor(private jwtService: JwtService) {}
@@ -34,8 +33,9 @@ export class AuthService {
   }
 
   async loginJwt({ email, id }: LoginDto, authHeader: string) {
-    if (authHeader) { // update checking
-      throw new PreconditionFailedException
+    if (authHeader) {
+      // update checking
+      throw new PreconditionFailedException()
     }
 
     const payload = { email, sub: id }
@@ -45,7 +45,7 @@ export class AuthService {
       token_type: 'jwt',
       user_id: id
     })
-    
+
     await tokenRepo.save(token)
 
     return token
@@ -53,11 +53,10 @@ export class AuthService {
 
   async logoutJwt(authHeader: string) {
     try {
-    if (!authHeader)
-      throw new Error("there's no user logged in")
+      if (!authHeader) throw new Error("there's no user logged in")
       // await this.revokeToken()
-      return {message: 'successfully logged out'}
-    } catch(e) {
+      return { message: 'successfully logged out' }
+    } catch (e) {
       return new Error(e.message)
     }
   }

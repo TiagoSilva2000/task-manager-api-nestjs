@@ -4,20 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { AppService } from '../services/app.service'
 import { config } from '../../../configs'
-import TaskController from '../../task/controllers/task.controller'
-import UserController from '../../user/controllers/user.controller'
-import TaskService from '../../task/services/task.service'
-import LocalStrategy from 'src/app/auth/strategies/local.strategy'
-import { AuthService } from 'src/app/auth/services/auth.service'
-import LocalAuthGuard from 'src/app/auth/guards/local-auth.guard'
-import { JwtService, JwtModule } from '@nestjs/jwt'
-import { jwtConstants } from 'src/app/auth/constants'
-import JwtStrategy from 'src/app/auth/strategies/jwt.strategy'
-import JwtAuthGuard from 'src/app/auth/guards/jwt-auth.guard'
-import OwnerAuthGuard from 'src/app/auth/guards/owner.auth.guard'
 import { AppController } from '../controllers/app.controller'
-import UserService from '../../user/services/user.service'
-import SessionController from '../../auth/controllers/session.controller'
+import { AuthModule } from 'src/app/auth/modules/auth.module'
+import { TaskModule } from 'src/app/task/modules/task.module'
+import { UserModule } from 'src/app/user/modules/user.module'
+
 @Module({
   imports: [
     ConfigModule.forRoot({ load: config }),
@@ -27,27 +18,11 @@ import SessionController from '../../auth/controllers/session.controller'
       imports: [ConfigModule],
       inject: [ConfigService]
     }),
-    JwtModule.register({
-      secret: jwtConstants.secretKey,
-      signOptions: { expiresIn: '360s' }
-    })
+    AuthModule,
+    TaskModule,
+    UserModule
   ],
-  controllers: [
-    AppController,
-    TaskController,
-    UserController,
-    SessionController
-  ],
-  providers: [
-    AppService,
-    TaskService,
-    UserService,
-    AuthService,
-    LocalStrategy,
-    JwtStrategy,
-    LocalAuthGuard,
-    JwtAuthGuard,
-    OwnerAuthGuard
-  ]
+  controllers: [AppController],
+  providers: [AppService]
 })
 export class AppModule {}
