@@ -1,80 +1,47 @@
-import { Injectable } from '@nestjs/common'
-import { getRepository } from 'typeorm'
-import UserEntity from '../models/user.entity'
-import { CreateUserDto } from 'src/app/user/dtos/create-user.dto'
-import { UpdateUserDto } from 'src/app/user/dtos/update-user.dto'
-import { hash } from 'bcrypt'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { CreateUserDto } from '../dtos/create-user.dto'
+import { UpdateUserDto } from '../dtos/update-user.dto'
+import { InjectRepository } from '@nestjs/typeorm'
+import UserRepository from '../repositories/user.repository'
+import User from '../models/user.entity'
 
 @Injectable()
 export default class UserService {
+  constructor(
+    @InjectRepository(UserRepository)
+    private readonly userRepository: UserRepository
+  ) {}
+
   async createOne(userData: CreateUserDto): Promise<unknown> {
-    try {
-      const userRepo = getRepository(UserEntity)
-      const { password, ...shareableData } = userData
-      const hashedPassword = await hash(password, 10)
-
-      const user = userRepo.create({ ...userData, password: hashedPassword })
-
-      await userRepo.save(user)
-      return shareableData
-    } catch (e) {
-      throw new Error(e.message)
-    }
+    return this.userRepository.createUser(userData)
   }
 
   async findAll(limit?: number): Promise<unknown> {
-    try {
-      const userRepo = getRepository(UserEntity)
-      const users = await userRepo.find({ take: limit || 10 })
-
-      return users
-    } catch (e) {
-      throw new Error(e.message)
-    }
+    return this.userRepository.findAll(limit)
   }
 
   async findOne(id: number): Promise<unknown> {
-    try {
-      const userRepo = getRepository(UserEntity)
-      const user = await userRepo.findOneOrFail({ id })
+    return this.userRepository.findUser(id)
+  }
 
-      if (!user) throw new Error('usuário não foi encontrado')
-
-      return user
-    } catch (e) {
-      throw new Error(e.message)
-    }
+  async findByEmail(email: string): Promise<User> {
+    return this.userRepository.findUserByEmail(email)
   }
 
   async updateOne(id: number, update: UpdateUserDto): Promise<unknown> {
     try {
       if (update.password)
-        throw new Error(
-          'tentativa de mudar a senha por essa rota não é permitida'
+        throw new UnauthorizedException(
+          'attempting to change the password by this route is not allowed'
         )
 
-      const userRepo = getRepository(UserEntity)
-      const user = await userRepo.findOneOrFail({ id })
-      const updatedInfo = userRepo.create(update)
-      userRepo.merge(user, updatedInfo)
-
-      await userRepo.save(user)
-      return user
+      return this.userRepository.updateUser(id, update)
     } catch (e) {
-      throw new Error(e.message)
+      throw e
     }
   }
 
   async deleteOne(id: number): Promise<unknown> {
-    try {
-      const userRepo = getRepository(UserEntity)
-      const user = await userRepo.findOneOrFail({ id })
-      if (user) {
-        await userRepo.delete(id)
-      }
-      return { message: 'success', id }
-    } catch (e) {
-      throw new Error(e.message)
-    }
+    return this.userRepository.deleteUser(id)
   }
 }

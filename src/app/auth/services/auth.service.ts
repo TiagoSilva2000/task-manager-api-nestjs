@@ -1,64 +1,38 @@
-import { Injectable, PreconditionFailedException } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import * as bcrypt from 'bcrypt'
 import { ValidationDto } from '../dtos/validation.dto'
-import UserEntity from '../../user/models/user.entity'
-import { getRepository } from 'typeorm'
-import { JwtService } from '@nestjs/jwt'
-import { LoginDto } from 'src/app/auth/dtos/login.dto'
-import Token from '../models/token.entity'
+import { LoginDto } from '../dtos/login.dto'
+import UserService from '../../user/services/user.service'
+import TokenService from './token.service'
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private readonly tokenService: TokenService,
+    private readonly userService: UserService
+  ) {}
 
   async validate({ email, password }: ValidationDto): Promise<unknown> {
     try {
-      if (!email || !password)
-        throw new Error('dados não definidos para validação')
+      if (!email || !password) throw new BadRequestException()
 
-      const userRepo = getRepository(UserEntity)
-      const user = await userRepo.findOneOrFail({
-        where: { email },
-        select: ['id', 'email', 'password', 'name']
-      })
+      const user = await this.userService.findByEmail(email)
       const success = await bcrypt.compare(password, user.password)
-      if (success) {
-        const { password, ...result } = user
-        return result
-      }
-      throw new Error('falha')
+      if (!success) throw new BadRequestException()
+
+      const { password: pass, ...result } = user
+      return result
     } catch (e) {
-      return new Error(e.message)
+      return e
     }
   }
 
-  async loginJwt({ email, id }: LoginDto, authHeader: string) {
-    if (authHeader) {
-      // update checking
-      throw new PreconditionFailedException()
-    }
-
-    const payload = { email, sub: id }
-    const tokenRepo = getRepository(Token)
-    const token = tokenRepo.create({
-      token: this.jwtService.sign(payload),
-      token_type: 'jwt',
-      user_id: id
-    })
-
-    await tokenRepo.save(token)
-
-    return token
+  async loginJwt(loginData: LoginDto) {
+    return this.tokenService.createJwt(loginData)
   }
 
-  async logoutJwt(authHeader: string) {
-    try {
-      if (!authHeader) throw new Error("there's no user logged in")
-      // await this.revokeToken()
-      return { message: 'successfully logged out' }
-    } catch (e) {
-      return new Error(e.message)
-    }
+  logoutJwt() {
+    return { message: 'successfully logged out' }
   }
 
   // async revokeToken(tokenId: number) {

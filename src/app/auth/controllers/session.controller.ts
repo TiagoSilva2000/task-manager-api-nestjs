@@ -4,10 +4,11 @@ import {
   Post,
   Request,
   UseGuards,
-  Headers
+  Headers,
+  NotAcceptableException
 } from '@nestjs/common'
-import LocalAuthGuard from 'src/app/auth/guards/local-auth.guard'
-import { AuthService } from 'src/app/auth/services/auth.service'
+import LocalAuthGuard from '../guards/local-auth.guard'
+import { AuthService } from '../services/auth.service'
 
 @Controller('auth')
 export default class SessionController {
@@ -16,11 +17,16 @@ export default class SessionController {
   @Post('login')
   @UseGuards(LocalAuthGuard)
   async login(@Request() req, @Headers('authorization') auth: string) {
-    return this.authService.loginJwt(req.user, auth)
+    if (auth)
+      throw new NotAcceptableException('there is a user already logged in')
+
+    return this.authService.loginJwt(req.user)
   }
 
   @Delete('logout')
   async logout(@Headers('authorization') auth: string) {
-    return this.authService.logoutJwt(auth)
+    if (auth) throw new NotAcceptableException('there is no user logged')
+
+    return this.authService.logoutJwt()
   }
 }

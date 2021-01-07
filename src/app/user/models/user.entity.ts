@@ -1,7 +1,8 @@
-import Token from 'src/app/auth/models/token.entity'
-import Task from 'src/app/task/models/task.entity'
+import Token from '../../auth/models/token.entity'
+import Task from '../../task/models/task.entity'
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { IsInt, IsString, Length, IsEmail, IsPositive } from 'class-validator'
+
 @Entity('users')
 export default class User {
   @IsInt()

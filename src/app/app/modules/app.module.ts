@@ -5,9 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppService } from '../services/app.service'
 import { config } from '../../../configs'
 import { AppController } from '../controllers/app.controller'
-import { AuthModule } from 'src/app/auth/modules/auth.module'
-import { TaskModule } from 'src/app/task/modules/task.module'
-import { UserModule } from 'src/app/user/modules/user.module'
+import { AuthModule } from '../../auth/modules/auth.module'
+import { TaskModule } from '../../task/modules/task.module'
+import { UserModule } from '../../user/modules/user.module'
 
 @Module({
   imports: [

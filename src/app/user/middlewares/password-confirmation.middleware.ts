@@ -8,9 +8,13 @@ export function passwordConfirmation(
 ) {
   const { password, password_confirmation: passConf } = req.body
 
+  if (!password && !passConf) return next()
+
   if (password && passConf) {
-    if (passConf === password) next()
-    return res.status(400).send(new Error('passwords do not match'))
+    if (passConf === password) return next()
+    return res
+      .status(400)
+      .send(new BadRequestException('passwords did not match'))
   }
   return res.status(400).send(new BadRequestException())
 }

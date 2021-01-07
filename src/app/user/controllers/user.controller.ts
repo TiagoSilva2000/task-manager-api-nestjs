@@ -9,9 +9,9 @@ import {
   Query,
   UseGuards
 } from '@nestjs/common'
-import { CreateUserDto } from 'src/app/user/dtos/create-user.dto'
-import JwtAuthGuard from 'src/app/auth/guards/jwt-auth.guard'
-import OwnerAuthGuard from 'src/app/auth/guards/owner.auth.guard'
+import { CreateUserDto } from '../dtos/create-user.dto'
+import JwtAuthGuard from '../../auth/guards/jwt-auth.guard'
+import OwnerAuthGuard from '../../auth/guards/owner.auth.guard'
 import UserService from '../services/user.service'
 
 @Controller('users')
@@ -20,18 +20,18 @@ export default class UserController {
 
   @Post('signin')
   async createOne(@Body() body: CreateUserDto): Promise<unknown> {
-    return await this.userService.createOne(body)
+    return this.userService.createOne(body)
   }
 
   @Get()
   async findAll(@Query('limit') limit?: number): Promise<unknown> {
-    return await this.userService.findAll(limit)
+    return this.userService.findAll(limit)
   }
 
   @UseGuards(JwtAuthGuard, OwnerAuthGuard)
   @Get(':userId')
   async findOne(@Param('userId') userId: number): Promise<unknown> {
-    return await this.userService.findOne(userId)
+    return this.userService.findOne(userId)
   }
 
   @UseGuards(JwtAuthGuard, OwnerAuthGuard)
@@ -40,12 +40,12 @@ export default class UserController {
     @Param('userId') userId: number,
     @Body() body: CreateUserDto
   ): Promise<unknown> {
-    return await this.userService.updateOne(userId, body)
+    return this.userService.updateOne(userId, body)
   }
 
   @UseGuards(JwtAuthGuard, OwnerAuthGuard)
   @Delete(':userId')
   async deleteOne(@Param('userId') userId: number): Promise<unknown> {
-    return await this.userService.deleteOne(userId)
+    return this.userService.deleteOne(userId)
   }
 }
